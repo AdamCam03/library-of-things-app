@@ -25,7 +25,7 @@
 
             <!-- App Logo/Title -->
             <Label Grid.Row="0"
-                   Text="StarterApp"
+                   Text="Library of Things"
                    FontSize="32"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
