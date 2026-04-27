@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StarterApp.Database.Models;
 
+
 namespace StarterApp.Database.Data;
 
 public class AppDbContext : DbContext
@@ -37,6 +38,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<Item> Items {get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,6 +76,16 @@ public class AppDbContext : DbContext
                   .WithMany(r => r.UserRoles)
                   .HasForeignKey(ur => ur.RoleId);
         });
+
+        modelBuilder.Entity<Item>(entity =>
+            {
+                entity.Property(e => e.Title).HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.Category).HasMaxLength(100);
+                entity.Property(e => e.LocationName).HasMaxLength(200);
+                entity.Property(e => e.DailyRate).HasColumnType("decimal(10,2)");
+            });
+
     }
 
 }

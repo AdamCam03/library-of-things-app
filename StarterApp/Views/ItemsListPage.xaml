@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="StarterApp.Views.ItemsListPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    // Grid layout to properly structure page sections
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        // Button to navigate to Create Item page
+        <Button Grid.Row="0"
+                Text="List an Item"
+                Command="{Binding GoToCreateItemCommand}"
+                Margin="10" />
+
+        // Displays any error messages
+        <Label Grid.Row="1"
+               Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               Margin="10" />
+
+        // Pull-to-refresh container
+        <RefreshView Grid.Row="2"
+                     Command="{Binding LoadItemsCommand}"
+                     IsRefreshing="{Binding IsBusy}">
+
+            // Displays list of items
+            <CollectionView ItemsSource="{Binding Items}"
+                            SelectionMode="None">
+
+                // Message shown when there are no items
+                <CollectionView.EmptyView>
+                    <Label Text="No items available yet. List an item to get started."
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="16" />
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        // Card-style layout for each item
+                        <Border Margin="10"
+                                Padding="15"
+                                Stroke="LightGray"
+                                StrokeThickness="1">
+
+                            <VerticalStackLayout Spacing="8">
+
+                                // Item title
+                                <Label Text="{Binding Title}"
+                                       FontSize="20"
+                                       FontAttributes="Bold" />
+
+                                // Item description
+                                <Label Text="{Binding Description}"
+                                       FontSize="14" />
+
+                                // Item category
+                                <Label Text="{Binding Category}"
+                                       FontSize="14" />
+
+                                // Item location
+                                <Label Text="{Binding LocationName}"
+                                       FontSize="14" />
+
+                                // Price per day
+                                <Label Text="{Binding DailyRate, StringFormat='£{0:F2} per day'}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+
+                            </VerticalStackLayout>
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </RefreshView>
+
+    </Grid>
+</ContentPage>

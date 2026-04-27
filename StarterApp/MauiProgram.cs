@@ -4,6 +4,7 @@ using StarterApp.Database.Data;
 using StarterApp.Views;
 using System.Diagnostics;
 using StarterApp.Services;
+using StarterApp.Database.Data.Repositories;
 
 namespace StarterApp;
 
@@ -21,6 +22,7 @@ public static class MauiProgram
             });
 
         builder.Services.AddDbContext<AppDbContext>();
+        builder.Services.AddScoped<IItemRepository, ItemRepository>();
 
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
@@ -41,6 +43,12 @@ public static class MauiProgram
         builder.Services.AddTransient<UserDetailViewModel>();
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
+        builder.Services.AddTransient<ItemsListViewModel>();
+        builder.Services.AddTransient<ItemsListPage>();
+        builder.Services.AddTransient<CreateItemViewModel>();
+        builder.Services.AddTransient<CreateItemPage>();
+        builder.Services.AddTransient<ItemDetailViewModel>();
+        builder.Services.AddTransient<ItemDetailPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
