@@ -29,6 +29,18 @@
                    FontSize="18"
                    FontAttributes="Bold" />
 
+            <!-- Edit button, only visible to the item owner -->
+            <Button Text="Edit Item"
+                    Command="{Binding GoToEditItemCommand}"
+                    IsVisible="{Binding IsOwner}" />
+
+            <!-- Delete button, only visible to the item owner -->
+            <Button Text="Delete Item"
+                    Command="{Binding DeleteItemCommand}"
+                    IsVisible="{Binding IsOwner}"
+                    BackgroundColor="Red"
+                    TextColor="White" />
+
             <!-- Error message -->
             <Label Text="{Binding ErrorMessage}"
                    TextColor="Red" />

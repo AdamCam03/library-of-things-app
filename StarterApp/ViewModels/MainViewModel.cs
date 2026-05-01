@@ -123,6 +123,15 @@ public partial class MainViewModel : BaseViewModel
         await _navigationService.NavigateToAsync("UserListPage");
     }
 
+    /// @brief Navigates to the items browsing page
+    /// @details Relay command that opens the browsing item page
+    /// @return A task representing the asynchronous navigation operation
+    [RelayCommand]
+    private async Task GoToItemsAsync()
+    {
+        await _navigationService.NavigateToAsync("ItemsListPage");
+    }
+
     /// @brief Refreshes the dashboard data
     /// @details Relay command that reloads user data and simulates a refresh operation
     /// @return A task representing the asynchronous refresh operation

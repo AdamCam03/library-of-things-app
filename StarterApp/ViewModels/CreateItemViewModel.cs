@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StarterApp.Database.Data.Repositories;
 using StarterApp.Database.Models;
+using StarterApp.Services;
 
 namespace StarterApp.ViewModels;
 
@@ -9,6 +10,7 @@ namespace StarterApp.ViewModels;
 public partial class CreateItemViewModel : BaseViewModel
 {
     private readonly IItemRepository _itemRepository;
+    private readonly IAuthenticationService _authService;
 
     [ObservableProperty]
     private string itemTitle = string.Empty;
@@ -25,9 +27,10 @@ public partial class CreateItemViewModel : BaseViewModel
     [ObservableProperty]
     private decimal itemDailyRate;
 
-    public CreateItemViewModel(IItemRepository itemRepository)
+    public CreateItemViewModel(IItemRepository itemRepository, IAuthenticationService authService)
     {
         _itemRepository = itemRepository;
+        _authService = authService;
         Title = "List an Item";
     }
 
@@ -47,6 +50,12 @@ public partial class CreateItemViewModel : BaseViewModel
             return;
         }
 
+        if (_authService.CurrentUser == null)
+        {
+            ErrorMessage = "You must be logged in to list an item";
+            return;
+        }
+
         var item = new Item
         {
             Title = ItemTitle,
@@ -54,7 +63,7 @@ public partial class CreateItemViewModel : BaseViewModel
             Category = ItemCategory,
             LocationName = LocationName,
             DailyRate = ItemDailyRate,
-            OwnerId = 1
+            OwnerId = _authService.CurrentUser.Id
         };
 
         await _itemRepository.CreateAsync(item);
