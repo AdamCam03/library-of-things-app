@@ -7,8 +7,8 @@ using System.Collections.ObjectModel;
 
 namespace StarterApp.ViewModels;
 
-// ViewModel for displaying items available to rent from other users
-public partial class ItemsListViewModel : BaseViewModel
+// ViewModel for displaying items owned by the logged-in user
+public partial class MyItemsViewModel : BaseViewModel
 {
     private readonly IItemRepository _itemRepository;
     private readonly IAuthenticationService _authService;
@@ -16,14 +16,14 @@ public partial class ItemsListViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<Item> items = new();
 
-    public ItemsListViewModel(IItemRepository itemRepository, IAuthenticationService authService)
+    public MyItemsViewModel(IItemRepository itemRepository, IAuthenticationService authService)
     {
         _itemRepository = itemRepository;
         _authService = authService;
-        Title = "Browse Items";
+        Title = "Your Inventory";
     }
 
-    // Loads items not owned by the logged-in user
+    // Loads items owned by the logged-in user
     [RelayCommand]
     private async Task LoadItemsAsync()
     {
@@ -39,11 +39,11 @@ public partial class ItemsListViewModel : BaseViewModel
 
             if (_authService.CurrentUser == null)
             {
-                ErrorMessage = "You must be logged in to browse items";
+                ErrorMessage = "You must be logged in to view your inventory";
                 return;
             }
 
-            var itemList = await _itemRepository.GetAvailableItemsForUserAsync(_authService.CurrentUser.Id);
+            var itemList = await _itemRepository.GetByOwnerIdAsync(_authService.CurrentUser.Id);
 
             Items.Clear();
 
@@ -54,7 +54,7 @@ public partial class ItemsListViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Failed to load items: {ex.Message}";
+            ErrorMessage = $"Failed to load inventory: {ex.Message}";
         }
         finally
         {
@@ -62,14 +62,21 @@ public partial class ItemsListViewModel : BaseViewModel
         }
     }
 
-    // Navigates to the create item page
+    // Navigates to create item page
     [RelayCommand]
     private async Task GoToCreateItemAsync()
     {
         await Shell.Current.GoToAsync("CreateItemPage");
     }
 
-    // Navigates to the item detail page when an item is selected
+    // Navigates to rental requests page
+    [RelayCommand]
+    private async Task GoToRentalRequestsAsync()
+    {
+        await Shell.Current.GoToAsync("RentalRequestsPage");
+    }
+
+    // Navigates to item detail page
     [RelayCommand]
     private async Task GoToItemDetailAsync(Item item)
     {

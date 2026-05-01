@@ -11,6 +11,7 @@ namespace StarterApp.ViewModels;
 public partial class ItemDetailViewModel : BaseViewModel
 {
     private readonly IItemRepository _itemRepository;
+    private readonly IRentalRepository _rentalRepository;
     private readonly IAuthenticationService _authService;
 
     [ObservableProperty]
@@ -22,9 +23,16 @@ public partial class ItemDetailViewModel : BaseViewModel
     [ObservableProperty]
     private bool isOwner;
 
-    public ItemDetailViewModel(IItemRepository itemRepository, IAuthenticationService authService)
+    [ObservableProperty]
+    private bool canRequestRental;
+
+    public ItemDetailViewModel(
+        IItemRepository itemRepository,
+        IRentalRepository rentalRepository,
+        IAuthenticationService authService)
     {
         _itemRepository = itemRepository;
+        _rentalRepository = rentalRepository;
         _authService = authService;
         Title = "Item Details";
     }
@@ -55,12 +63,15 @@ public partial class ItemDetailViewModel : BaseViewModel
             {
                 ErrorMessage = "Item not found";
                 IsOwner = false;
+                CanRequestRental = false;
                 return;
             }
 
-            // Checks whether the logged-in user owns this item
             IsOwner = _authService.CurrentUser != null
                       && SelectedItem.OwnerId == _authService.CurrentUser.Id;
+
+            // Users can only request rentals for items they do not own
+            CanRequestRental = _authService.CurrentUser != null && !IsOwner;
         }
         catch (Exception ex)
         {
@@ -70,6 +81,43 @@ public partial class ItemDetailViewModel : BaseViewModel
         {
             IsBusy = false;
         }
+    }
+
+    // Creates a rental request for this item
+    [RelayCommand]
+    private async Task RequestRentalAsync()
+    {
+        if (SelectedItem == null)
+        {
+            return;
+        }
+
+        if (_authService.CurrentUser == null)
+        {
+            ErrorMessage = "You must be logged in to request a rental";
+            return;
+        }
+
+        if (IsOwner)
+        {
+            ErrorMessage = "You cannot rent your own item";
+            return;
+        }
+
+        var rental = new Rental
+        {
+            ItemId = SelectedItem.Id,
+            RenterId = _authService.CurrentUser.Id,
+            OwnerId = SelectedItem.OwnerId,
+            Status = "Pending"
+        };
+
+        await _rentalRepository.CreateAsync(rental);
+
+        await Application.Current.MainPage.DisplayAlert(
+            "Rental Requested",
+            "Your rental request has been submitted.",
+            "OK");
     }
 
     // Navigates to edit item page
@@ -112,7 +160,6 @@ public partial class ItemDetailViewModel : BaseViewModel
 
         await _itemRepository.DeleteAsync(SelectedItem.Id);
 
-        // Return to browse items after deleting
         await Shell.Current.GoToAsync("..");
     }
 }

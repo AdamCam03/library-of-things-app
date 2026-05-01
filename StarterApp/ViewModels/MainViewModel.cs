@@ -22,32 +22,24 @@ public partial class MainViewModel : BaseViewModel
     private readonly INavigationService _navigationService;
 
     /// @brief The currently authenticated user
-    /// @details Observable property containing the current user's information
     [ObservableProperty]
     private User? currentUser;
 
     /// @brief Welcome message displayed to the user
-    /// @details Observable property showing a personalized welcome message
     [ObservableProperty]
     private string welcomeMessage = string.Empty;
 
     /// @brief Indicates whether the current user has admin privileges
-    /// @details Observable property used to control visibility of admin features
     [ObservableProperty]
     private bool isAdmin;
 
     /// @brief Default constructor for design-time support
-    /// @details Sets the title to "Dashboard"
     public MainViewModel()
-        {
-            // Default constructor for design time support
-            Title = "Dashboard";
-        }
+    {
+        Title = "Dashboard";
+    }
     
     /// @brief Initializes a new instance of the MainViewModel class
-    /// @param authService The authentication service instance
-    /// @param navigationService The navigation service instance
-    /// @details Sets up the required services, initializes the title, and loads user data
     public MainViewModel(IAuthenticationService authService, INavigationService navigationService)
     {
         _authService = authService;
@@ -58,7 +50,6 @@ public partial class MainViewModel : BaseViewModel
     }
 
     /// @brief Loads the current user's data and sets up the dashboard
-    /// @details Retrieves current user information and determines admin status
     private void LoadUserData()
     {
         CurrentUser = _authService.CurrentUser;
@@ -71,8 +62,6 @@ public partial class MainViewModel : BaseViewModel
     }
 
     /// @brief Logs out the current user
-    /// @details Relay command that confirms logout and performs the logout operation
-    /// @return A task representing the asynchronous logout operation
     [RelayCommand]
     private async Task LogoutAsync()
     {
@@ -90,8 +79,6 @@ public partial class MainViewModel : BaseViewModel
     }
 
     /// @brief Navigates to the user profile page
-    /// @details Relay command that navigates to the profile management page
-    /// @return A task representing the asynchronous navigation operation
     [RelayCommand]
     private async Task NavigateToProfileAsync()
     {
@@ -99,24 +86,22 @@ public partial class MainViewModel : BaseViewModel
     }
 
     /// @brief Navigates to the settings page
-    /// @details Relay command that navigates to the application settings page
-    /// @return A task representing the asynchronous navigation operation
     [RelayCommand]
     private async Task NavigateToSettingsAsync()
     {
         await _navigationService.NavigateToAsync("TempPage");
     }
 
-
-    /// @brief Navigates to the user list page
-    /// @details Relay command that navigates to the user management page, admin only
-    /// @return A task representing the asynchronous navigation operation
+    /// @brief Navigates to the user list page (admin only)
     [RelayCommand]
     private async Task NavigateToUserListAsync()
     {
         if (!IsAdmin)
         {
-            await Application.Current.MainPage.DisplayAlert("Access Denied", "You don't have permission to access admin features.", "OK");
+            await Application.Current.MainPage.DisplayAlert(
+                "Access Denied", 
+                "You don't have permission to access admin features.", 
+                "OK");
             return;
         }
         
@@ -124,17 +109,20 @@ public partial class MainViewModel : BaseViewModel
     }
 
     /// @brief Navigates to the items browsing page
-    /// @details Relay command that opens the browsing item page
-    /// @return A task representing the asynchronous navigation operation
     [RelayCommand]
     private async Task GoToItemsAsync()
     {
         await _navigationService.NavigateToAsync("ItemsListPage");
     }
 
+    /// @brief Navigates to the user's own inventory page
+    [RelayCommand]
+    private async Task GoToMyItemsAsync()
+    {
+        await _navigationService.NavigateToAsync("MyItemsPage");
+    }
+
     /// @brief Refreshes the dashboard data
-    /// @details Relay command that reloads user data and simulates a refresh operation
-    /// @return A task representing the asynchronous refresh operation
     [RelayCommand]
     private async Task RefreshDataAsync()
     {
@@ -143,7 +131,6 @@ public partial class MainViewModel : BaseViewModel
             IsBusy = true;
             LoadUserData();
             
-            // Simulate refresh delay
             await Task.Delay(1000);
         }
         catch (Exception ex)

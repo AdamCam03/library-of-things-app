@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="StarterApp.Views.RentalRequestsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="{Binding Title}">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <!-- Page heading -->
+        <Label Text="Rental Requests"
+               FontSize="24"
+               FontAttributes="Bold" />
+
+        <!-- Error message -->
+        <Label Text="{Binding ErrorMessage}"
+               TextColor="Red" />
+
+        <!-- Rental requests list -->
+        <CollectionView ItemsSource="{Binding Rentals}">
+
+            <CollectionView.EmptyView>
+                <Label Text="No rental requests yet."
+                       FontSize="16"
+                       HorizontalOptions="Center" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <!-- Rental request card -->
+                    <Border Margin="0,5"
+                            Padding="15"
+                            Stroke="LightGray"
+                            StrokeThickness="1">
+
+                        <VerticalStackLayout Spacing="8">
+
+                            <!-- Requested item -->
+                            <Label Text="{Binding Item.Title}"
+                                   FontSize="18"
+                                   FontAttributes="Bold" />
+
+                            <!-- Price per day -->
+                            <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}" />
+
+                            <!-- Requesting user -->
+                            <Label Text="{Binding Renter.FullName, StringFormat='Requested by: {0}'}" />
+
+                            <!-- Item owner -->
+                            <Label Text="{Binding Owner.FullName, StringFormat='Owner: {0}'}" />
+
+                            <!-- Request status -->
+                            <Label Text="{Binding Status, StringFormat='Status: {0}'}"
+                                   FontAttributes="Bold" />
+
+                            <!-- Action buttons -->
+                            <HorizontalStackLayout Spacing="10">
+                                <Button Text="Accept"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AcceptRentalCommand}"
+                                        CommandParameter="{Binding}" />
+
+                                <Button Text="Reject"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RejectRentalCommand}"
+                                        CommandParameter="{Binding}"
+                                        BackgroundColor="Red"
+                                        TextColor="White" />
+                            </HorizontalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

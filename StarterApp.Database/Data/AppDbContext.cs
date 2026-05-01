@@ -3,14 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StarterApp.Database.Models;
 
-
 namespace StarterApp.Database.Data;
 
 public class AppDbContext : DbContext
 {
-
     public AppDbContext()
     { }
+
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
 
@@ -22,8 +21,8 @@ public class AppDbContext : DbContext
 
         if (string.IsNullOrEmpty(connectionString))
         {
-            var a = Assembly.GetExecutingAssembly();
-            using var stream = a.GetManifestResourceStream("StarterApp.Database.appsettings.json");
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream("StarterApp.Database.appsettings.json");
 
             var config = new ConfigurationBuilder()
                 .AddJsonStream(stream)
@@ -35,10 +34,12 @@ public class AppDbContext : DbContext
         optionsBuilder.UseNpgsql(connectionString);
     }
 
+    // Database tables
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
-    public DbSet<Item> Items {get; set; }
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Rental> Rentals { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,45 +48,50 @@ public class AppDbContext : DbContext
         // Configure User entity
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasIndex(e => e.Email).IsUnique();
-            entity.Property(e => e.Email).HasMaxLength(255);
-            entity.Property(e => e.FirstName).HasMaxLength(100);
-            entity.Property(e => e.LastName).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.PasswordSalt).HasMaxLength(255);
+            entity.HasIndex(user => user.Email).IsUnique();
+            entity.Property(user => user.Email).HasMaxLength(255);
+            entity.Property(user => user.FirstName).HasMaxLength(100);
+            entity.Property(user => user.LastName).HasMaxLength(100);
+            entity.Property(user => user.PasswordHash).HasMaxLength(255);
+            entity.Property(user => user.PasswordSalt).HasMaxLength(255);
         });
 
         // Configure Role entity
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasIndex(e => e.Name).IsUnique();
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasIndex(role => role.Name).IsUnique();
+            entity.Property(role => role.Name).HasMaxLength(100);
+            entity.Property(role => role.Description).HasMaxLength(500);
         });
 
         // Configure UserRole entity
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasIndex(e => new { e.UserId, e.RoleId }).IsUnique();
+            entity.HasIndex(userRole => new { userRole.UserId, userRole.RoleId }).IsUnique();
 
-            entity.HasOne(ur => ur.User)
-                  .WithMany(u => u.UserRoles)
-                  .HasForeignKey(ur => ur.UserId);
+            entity.HasOne(userRole => userRole.User)
+                  .WithMany(user => user.UserRoles)
+                  .HasForeignKey(userRole => userRole.UserId);
 
-            entity.HasOne(ur => ur.Role)
-                  .WithMany(r => r.UserRoles)
-                  .HasForeignKey(ur => ur.RoleId);
+            entity.HasOne(userRole => userRole.Role)
+                  .WithMany(role => role.UserRoles)
+                  .HasForeignKey(userRole => userRole.RoleId);
         });
 
+        // Configure Item entity
         modelBuilder.Entity<Item>(entity =>
-            {
-                entity.Property(e => e.Title).HasMaxLength(200);
-                entity.Property(e => e.Description).HasMaxLength(1000);
-                entity.Property(e => e.Category).HasMaxLength(100);
-                entity.Property(e => e.LocationName).HasMaxLength(200);
-                entity.Property(e => e.DailyRate).HasColumnType("decimal(10,2)");
-            });
+        {
+            entity.Property(item => item.Title).HasMaxLength(200);
+            entity.Property(item => item.Description).HasMaxLength(1000);
+            entity.Property(item => item.Category).HasMaxLength(100);
+            entity.Property(item => item.LocationName).HasMaxLength(200);
+            entity.Property(item => item.DailyRate).HasColumnType("decimal(10,2)");
+        });
 
+        // Configure Rental entity
+        modelBuilder.Entity<Rental>(entity =>
+        {
+            entity.Property(rental => rental.Status).HasMaxLength(50);
+        });
     }
-
 }

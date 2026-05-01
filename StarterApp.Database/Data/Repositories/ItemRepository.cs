@@ -4,18 +4,18 @@ using StarterApp.Database.Models;
 
 namespace StarterApp.Database.Data.Repositories;
 
-//Repository implementation for Item data access using Entity Framework
+// Repository implementation for Item data access using Entity Framework
 public class ItemRepository : IItemRepository
 {
     private readonly AppDbContext _context;
 
-    //Constructor - injects the database context
+    // Constructor - injects the database context
     public ItemRepository(AppDbContext context)
     {
         _context = context;
     }
 
-    //Gets all items from the database
+    // Gets all items from the database
     public async Task<List<Item>> GetAllAsync()
     {
         return await _context.Items
@@ -23,14 +23,32 @@ public class ItemRepository : IItemRepository
             .ToListAsync();
     }
 
-    //Gets a single item by its ID
+    // Gets a single item by its ID
     public async Task<Item?> GetByIdAsync(int id)
     {
         return await _context.Items
             .FirstOrDefaultAsync(item => item.Id == id);
     }
 
-    //Creates a new item in the database
+    // Gets all items owned by a specific user
+    public async Task<List<Item>> GetByOwnerIdAsync(int ownerId)
+    {
+        return await _context.Items
+            .Where(item => item.OwnerId == ownerId)
+            .OrderByDescending(item => item.CreatedAt)
+            .ToListAsync();
+    }
+
+    // Gets all items NOT owned by the current user (for browsing)
+    public async Task<List<Item>> GetAvailableItemsForUserAsync(int userId)
+    {
+        return await _context.Items
+            .Where(item => item.OwnerId != userId)
+            .OrderByDescending(item => item.CreatedAt)
+            .ToListAsync();
+    }
+
+    // Creates a new item in the database
     public async Task<Item> CreateAsync(Item item)
     {
         item.CreatedAt = DateTime.UtcNow;
@@ -41,7 +59,7 @@ public class ItemRepository : IItemRepository
         return item;
     }
 
-    //Updates an existing item
+    // Updates an existing item
     public async Task UpdateAsync(Item item)
     {
         var existingItem = await _context.Items.FindAsync(item.Id);
@@ -62,7 +80,7 @@ public class ItemRepository : IItemRepository
         await _context.SaveChangesAsync();
     }
 
-    //Deletes an item by its ID
+    // Deletes an item by its ID
     public async Task DeleteAsync(int id)
     {
         var item = await _context.Items.FindAsync(id);
