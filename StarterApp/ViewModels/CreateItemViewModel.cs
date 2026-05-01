@@ -61,13 +61,20 @@ public partial class CreateItemViewModel : BaseViewModel
             Title = ItemTitle,
             Description = ItemDescription,
             Category = ItemCategory,
+            CategoryId = 1, // Default to Tools
             LocationName = LocationName,
             DailyRate = ItemDailyRate,
             OwnerId = _authService.CurrentUser.Id
         };
 
-        await _itemRepository.CreateAsync(item);
-
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            await _itemRepository.CreateAsync(item);
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
     }
 }

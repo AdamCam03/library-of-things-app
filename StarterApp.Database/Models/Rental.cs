@@ -1,6 +1,5 @@
 namespace StarterApp.Database.Models;
 
-// Represents a rental request for an item
 public class Rental
 {
     public int Id { get; set; }
@@ -13,14 +12,16 @@ public class Rental
 
     public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
 
+    public DateTime StartDate { get; set; } = DateTime.UtcNow.AddDays(1);
+
+    public DateTime EndDate { get; set; } = DateTime.UtcNow.AddDays(2);
+
+    public string Message { get; set; } = string.Empty;
+
     public string Status { get; set; } = "Pending";
 
-    // Item being requested
+    // Navigation properties
     public Item? Item { get; set; }
-
-    // User requesting the rental
     public User? Renter { get; set; }
-
-    // User who owns the item
     public User? Owner { get; set; }
 }

@@ -96,12 +96,12 @@ public partial class RegisterViewModel : BaseViewModel
             }
             else
             {
-                SetError(result.Message);
+                SetError($"Failed: {result.Message}");
             }
         }
         catch (Exception ex)
         {
-            SetError($"Registration failed: {ex.Message}");
+            SetError($"Exception: {ex.Message}");
         }
         finally
         {

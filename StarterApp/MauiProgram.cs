@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using StarterApp.ViewModels;
 using StarterApp.Database.Data;
 using StarterApp.Views;
-using System.Diagnostics;
 using StarterApp.Services;
 using StarterApp.Database.Data.Repositories;
 
@@ -10,6 +9,10 @@ namespace StarterApp;
 
 public static class MauiProgram
 {
+    // Toggle this to switch between local DB and shared API
+    // Set to true to use the API
+    const bool useSharedApi = true;
+
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
@@ -21,11 +24,25 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        builder.Services.AddDbContext<AppDbContext>();
-        builder.Services.AddScoped<IItemRepository, ItemRepository>();
-        builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+        if (useSharedApi)
+        {
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://set09102-api.b-davison.workers.dev/")
+            };
+            builder.Services.AddSingleton(httpClient);
+            builder.Services.AddSingleton<IAuthenticationService, ApiAuthenticationService>();
+            builder.Services.AddSingleton<IItemRepository, ApiItemService>();
+            builder.Services.AddSingleton<IRentalRepository, ApiRentalService>();
+        }
+        else
+        {
+            builder.Services.AddDbContext<AppDbContext>();
+            builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IItemRepository, ItemRepository>();
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+        }
 
-        builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
         builder.Services.AddSingleton<AppShellViewModel>();
@@ -56,8 +73,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MyItemsPage>();
         builder.Services.AddTransient<RentalRequestsViewModel>();
         builder.Services.AddTransient<RentalRequestsPage>();
-       
-        
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

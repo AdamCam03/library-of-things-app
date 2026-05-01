@@ -84,41 +84,48 @@ public partial class ItemDetailViewModel : BaseViewModel
     }
 
     // Creates a rental request for this item
-    [RelayCommand]
-    private async Task RequestRentalAsync()
+   [RelayCommand]
+private async Task RequestRentalAsync()
+{
+    if (SelectedItem == null) return;
+
+    if (_authService.CurrentUser == null)
     {
-        if (SelectedItem == null)
-        {
-            return;
-        }
+        ErrorMessage = "You must be logged in to request a rental";
+        return;
+    }
 
-        if (_authService.CurrentUser == null)
-        {
-            ErrorMessage = "You must be logged in to request a rental";
-            return;
-        }
+    if (IsOwner)
+    {
+        ErrorMessage = "You cannot rent your own item";
+        return;
+    }
 
-        if (IsOwner)
-        {
-            ErrorMessage = "You cannot rent your own item";
-            return;
-        }
-
+    try
+    {
         var rental = new Rental
         {
             ItemId = SelectedItem.Id,
             RenterId = _authService.CurrentUser.Id,
             OwnerId = SelectedItem.OwnerId,
+            StartDate = DateTime.UtcNow.AddDays(1),
+            EndDate = DateTime.UtcNow.AddDays(3),
+            Message = "Rental request",
             Status = "Pending"
         };
 
         await _rentalRepository.CreateAsync(rental);
 
-        await Application.Current.MainPage.DisplayAlert(
+        await Application.Current!.MainPage!.DisplayAlert(
             "Rental Requested",
             "Your rental request has been submitted.",
             "OK");
     }
+    catch (Exception ex)
+    {
+        ErrorMessage = $"Failed to request rental: {ex.Message}";
+    }
+}
 
     // Navigates to edit item page
     [RelayCommand]
