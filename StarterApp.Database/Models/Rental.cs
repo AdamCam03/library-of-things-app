@@ -1,16 +1,28 @@
 namespace StarterApp.Database.Models;
 
+// Represents a rental request for an item
 public class Rental
 {
     public int Id { get; set; }
 
     public int ItemId { get; set; }
 
-    public int RenterId { get; set; }
+    public string ItemTitle { get; set; } = string.Empty;
+
+    // API uses borrowerId, mapped from RenterId
+    public int BorrowerId { get; set; }
+
+    public int RenterId
+    {
+        get => BorrowerId;
+        set => BorrowerId = value;
+    }
+
+    public string BorrowerName { get; set; } = string.Empty;
 
     public int OwnerId { get; set; }
 
-    public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
+    public string OwnerName { get; set; } = string.Empty;
 
     public DateTime StartDate { get; set; } = DateTime.UtcNow.AddDays(1);
 
@@ -18,7 +30,13 @@ public class Rental
 
     public string Message { get; set; } = string.Empty;
 
-    public string Status { get; set; } = "Pending";
+    public string Status { get; set; } = "Requested";
+
+    public decimal TotalPrice { get; set; }
+
+    public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation properties
     public Item? Item { get; set; }

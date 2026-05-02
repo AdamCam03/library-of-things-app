@@ -52,12 +52,14 @@ public class ApiItemService : IItemRepository
     }
 
     // Gets all items owned by a specific user
+    // Filters client-side since API does not support ownerId filter
     public async Task<List<Item>> GetByOwnerIdAsync(int ownerId)
     {
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<ItemsResponse>($"items?ownerId={ownerId}");
-            return response?.Items ?? new List<Item>();
+            var response = await _httpClient.GetFromJsonAsync<ItemsResponse>("items");
+            var allItems = response?.Items ?? new List<Item>();
+            return allItems.Where(item => item.OwnerId == ownerId).ToList();
         }
         catch
         {
@@ -71,7 +73,7 @@ public class ApiItemService : IItemRepository
         try
         {
             var allItems = await GetAllAsync();
-            return allItems.Where(i => i.OwnerId != userId).ToList();
+            return allItems.Where(item => item.OwnerId != userId).ToList();
         }
         catch
         {

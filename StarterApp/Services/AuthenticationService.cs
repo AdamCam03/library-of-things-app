@@ -29,9 +29,9 @@ public class AuthenticationService : IAuthenticationService
         try
         {
             var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+                .Include(user => user.UserRoles)
+                .ThenInclude(userRole => userRole.Role)
+                .FirstOrDefaultAsync(user => user.Email == email && user.IsActive);
 
             if (user == null)
             {
@@ -45,8 +45,8 @@ public class AuthenticationService : IAuthenticationService
 
             _currentUser = user;
             _currentUserRoles = user.UserRoles
-                .Where(ur => ur.IsActive)
-                .Select(ur => ur.Role.Name)
+                .Where(userRole => userRole.IsActive)
+                .Select(userRole => userRole.Role.Name)
                 .ToList();
 
             AuthenticationStateChanged?.Invoke(this, true);
@@ -63,7 +63,7 @@ public class AuthenticationService : IAuthenticationService
         try
         {
             // Check if user already exists
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
             if (existingUser != null)
             {
                 return new AuthenticationResult(false, "User with this email already exists");
@@ -90,7 +90,7 @@ public class AuthenticationService : IAuthenticationService
             await _context.SaveChangesAsync();
 
             // Assign default "User" role
-            var userRole = await _context.Roles.FirstOrDefaultAsync(r => r.IsDefault == true);
+            var userRole = await _context.Roles.FirstOrDefaultAsync(role => role.IsDefault == true);
             if (userRole != null)
             {
                 var userRoleAssignment = new UserRole(user.Id, userRole.Id);

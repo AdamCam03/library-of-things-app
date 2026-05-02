@@ -84,48 +84,48 @@ public partial class ItemDetailViewModel : BaseViewModel
     }
 
     // Creates a rental request for this item
-   [RelayCommand]
-private async Task RequestRentalAsync()
-{
-    if (SelectedItem == null) return;
-
-    if (_authService.CurrentUser == null)
+    [RelayCommand]
+    private async Task RequestRentalAsync()
     {
-        ErrorMessage = "You must be logged in to request a rental";
-        return;
-    }
+        if (SelectedItem == null) return;
 
-    if (IsOwner)
-    {
-        ErrorMessage = "You cannot rent your own item";
-        return;
-    }
-
-    try
-    {
-        var rental = new Rental
+        if (_authService.CurrentUser == null)
         {
-            ItemId = SelectedItem.Id,
-            RenterId = _authService.CurrentUser.Id,
-            OwnerId = SelectedItem.OwnerId,
-            StartDate = DateTime.UtcNow.AddDays(1),
-            EndDate = DateTime.UtcNow.AddDays(3),
-            Message = "Rental request",
-            Status = "Pending"
-        };
+            ErrorMessage = "You must be logged in to request a rental";
+            return;
+        }
 
-        await _rentalRepository.CreateAsync(rental);
+        if (IsOwner)
+        {
+            ErrorMessage = "You cannot rent your own item";
+            return;
+        }
 
-        await Application.Current!.MainPage!.DisplayAlert(
-            "Rental Requested",
-            "Your rental request has been submitted.",
-            "OK");
+        try
+        {
+            var rental = new Rental
+            {
+                ItemId = SelectedItem.Id,
+                RenterId = _authService.CurrentUser.Id,
+                OwnerId = SelectedItem.OwnerId,
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                Message = "Rental request",
+                Status = "Pending"
+            };
+
+            await _rentalRepository.CreateAsync(rental);
+
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Rental Requested",
+                "Your rental request has been submitted.",
+                "OK");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to request rental: {ex.Message}";
+        }
     }
-    catch (Exception ex)
-    {
-        ErrorMessage = $"Failed to request rental: {ex.Message}";
-    }
-}
 
     // Navigates to edit item page
     [RelayCommand]
@@ -154,19 +154,25 @@ private async Task RequestRentalAsync()
             return;
         }
 
-        bool confirm = await Application.Current.MainPage.DisplayAlert(
-            "Delete Item",
-            "Are you sure you want to delete this item?",
-            "Delete",
-            "Cancel");
-
-        if (!confirm)
+        try
         {
-            return;
+            bool confirm = await Application.Current!.MainPage!.DisplayAlert(
+                "Delete Item",
+                "Are you sure you want to delete this item?",
+                "Delete",
+                "Cancel");
+
+            if (!confirm)
+            {
+                return;
+            }
+
+            await _itemRepository.DeleteAsync(SelectedItem.Id);
+            await Shell.Current.GoToAsync("..");
         }
-
-        await _itemRepository.DeleteAsync(SelectedItem.Id);
-
-        await Shell.Current.GoToAsync("..");
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to delete item: {ex.Message}";
+        }
     }
 }
