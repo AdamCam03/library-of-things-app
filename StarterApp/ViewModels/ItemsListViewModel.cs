@@ -69,6 +69,13 @@ public partial class ItemsListViewModel : BaseViewModel
         await Shell.Current.GoToAsync("CreateItemPage");
     }
 
+    // Navigates to the rental requests page
+    [RelayCommand]
+    private async Task GoToRentalRequestsAsync()
+    {
+        await Shell.Current.GoToAsync("RentalRequestsPage");
+    }
+
     // Navigates to the item detail page when an item is selected
     [RelayCommand]
     private async Task GoToItemDetailAsync(Item item)

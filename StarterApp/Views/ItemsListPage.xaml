@@ -5,13 +5,20 @@
              Title="{Binding Title}">
 
     <!-- Grid layout to structure page -->
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        <!-- Button to navigate to Create Item page -->
-        <Button Grid.Row="0"
-                Text="List an Item"
-                Command="{Binding GoToCreateItemCommand}"
-                Margin="10" />
+        <!-- Top buttons row -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" Margin="10">
+
+            <!-- Button to navigate to Create Item page -->
+            <Button Text="List an Item"
+                    Command="{Binding GoToCreateItemCommand}" />
+
+            <!-- Button to navigate to Rental Requests page -->
+            <Button Text="My Rentals"
+                    Command="{Binding GoToRentalRequestsCommand}" />
+
+        </HorizontalStackLayout>
 
         <!-- Displays error messages -->
         <Label Grid.Row="1"
@@ -20,10 +27,10 @@
                Margin="10" />
 
         <!-- Items list -->
-      <CollectionView Grid.Row="2"
-                ItemsSource="{Binding Items}"
-                SelectionMode="Single"
-                SelectionChanged="OnSelectionChanged">
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnSelectionChanged">
 
             <!-- Empty message -->
             <CollectionView.EmptyView>

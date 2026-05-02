@@ -36,18 +36,22 @@
                         <VerticalStackLayout Spacing="8">
 
                             <!-- Requested item -->
-                            <Label Text="{Binding Item.Title}"
+                            <Label Text="{Binding ItemTitle}"
                                    FontSize="18"
                                    FontAttributes="Bold" />
 
-                            <!-- Price per day -->
-                            <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}" />
+                            <!-- Total price -->
+                            <Label Text="{Binding TotalPrice, StringFormat='Total: £{0:F2}'}" />
 
                             <!-- Requesting user -->
-                            <Label Text="{Binding Renter.FullName, StringFormat='Requested by: {0}'}" />
+                            <Label Text="{Binding BorrowerName, StringFormat='Requested by: {0}'}" />
 
                             <!-- Item owner -->
-                            <Label Text="{Binding Owner.FullName, StringFormat='Owner: {0}'}" />
+                            <Label Text="{Binding OwnerName, StringFormat='Owner: {0}'}" />
+
+                            <!-- Rental dates -->
+                            <Label Text="{Binding StartDate, StringFormat='From: {0:dd/MM/yyyy}'}" />
+                            <Label Text="{Binding EndDate, StringFormat='To: {0:dd/MM/yyyy}'}" />
 
                             <!-- Request status -->
                             <Label Text="{Binding Status, StringFormat='Status: {0}'}"

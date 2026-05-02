@@ -65,7 +65,7 @@ public partial class RentalRequestsViewModel : BaseViewModel
         }
     }
 
-    // Accept rental (owner only)
+    // Approve rental request (owner only)
     [RelayCommand]
     private async Task AcceptRentalAsync(Rental rental)
     {
@@ -74,13 +74,19 @@ public partial class RentalRequestsViewModel : BaseViewModel
             return;
         }
 
-        rental.Status = "Accepted";
-        await _rentalRepository.UpdateAsync(rental);
-
-        await LoadRentalsAsync();
+        try
+        {
+            rental.Status = "Approved";
+            await _rentalRepository.UpdateAsync(rental);
+            await LoadRentalsAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to approve rental: {ex.Message}";
+        }
     }
 
-    // Reject rental (owner only)
+    // Reject rental request (owner only)
     [RelayCommand]
     private async Task RejectRentalAsync(Rental rental)
     {
@@ -89,9 +95,15 @@ public partial class RentalRequestsViewModel : BaseViewModel
             return;
         }
 
-        rental.Status = "Rejected";
-        await _rentalRepository.UpdateAsync(rental);
-
-        await LoadRentalsAsync();
+        try
+        {
+            rental.Status = "Rejected";
+            await _rentalRepository.UpdateAsync(rental);
+            await LoadRentalsAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to reject rental: {ex.Message}";
+        }
     }
 }
