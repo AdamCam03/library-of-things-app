@@ -103,18 +103,18 @@ public class ApiRentalService : IRentalRepository
             throw new InvalidOperationException($"API error {response.StatusCode}: {error}");
         }
     }
-Task<List<Rental>> IRepository<Rental>.GetAllAsync()
-{
-    return Task.FromResult(new List<Rental>());
-}
+    Task<List<Rental>> IRepository<Rental>.GetAllAsync()
+    {
+        return Task.FromResult(new List<Rental>());
+    }
 
-Task<Rental?> IRepository<Rental>.GetByIdAsync(int id)
-{
-    return Task.FromResult<Rental?>(null);
-}
+    Task<Rental?> IRepository<Rental>.GetByIdAsync(int id)
+    {
+        return Task.FromResult<Rental?>(null);
+    }
 
-Task IRepository<Rental>.DeleteAsync(int id)
-{
-    return Task.CompletedTask;
-}
+    Task IRepository<Rental>.DeleteAsync(int id)
+    {
+        return Task.CompletedTask;
+    }
 }

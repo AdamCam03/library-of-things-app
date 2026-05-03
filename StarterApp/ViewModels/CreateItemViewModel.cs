@@ -27,7 +27,7 @@ public partial class CreateItemViewModel : BaseViewModel
         { "Outdoors", 10 }
     };
 
-    // Maps location names to their coordinates
+    // Maps location names to their coordinates [latitude, longitude]
     private static readonly Dictionary<string, double[]> LocationCoords = new()
     {
         { "Edinburgh", new[] { 55.9533, -3.1883 } },

@@ -41,7 +41,8 @@ public class Rental
     // Set by ViewModel to indicate if this is an incoming request
     // This is not stored in the database
     public bool IsIncoming { get; set; } = false;
-
+    public bool IsOutgoing => !IsIncoming;
+    
     // Navigation properties
     public Item? Item { get; set; }
     public User? Renter { get; set; }
