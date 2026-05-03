@@ -30,16 +30,17 @@
                    FontSize="32"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
-                   Margin="0,0,0,30"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,0,0,10"
                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
 
-                    <!-- App Sub title -->
+            <!-- App Subtitle -->
             <Label Grid.Row="1"
                    Text="Rent everyday items in your local community"
-                   FontSize="18"
-                   FontAttributes="Bold"
+                   FontSize="16"
                    HorizontalOptions="Center"
-                   Margin="0,0,0,30"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,0,0,10"
                    TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
 
             <!-- Error Message -->
@@ -122,7 +123,7 @@
                         BorderColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                         HeightRequest="45"
                         CornerRadius="8" />
-                
+
                 <Button Text="Forgot Password?"
                         Command="{Binding ForgotPasswordCommand}"
                         BackgroundColor="Transparent"

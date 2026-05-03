@@ -4,31 +4,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              Title="{Binding Title}">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <Grid RowDefinitions="Auto,Auto,*">
 
         <!-- Page heading -->
-        <Label Text="Rental Requests"
+        <Label Grid.Row="0"
+               Text="Rental Requests"
                FontSize="24"
-               FontAttributes="Bold" />
+               FontAttributes="Bold"
+               Margin="20,20,20,0" />
 
         <!-- Error message -->
-        <Label Text="{Binding ErrorMessage}"
-               TextColor="Red" />
+        <Label Grid.Row="1"
+               Text="{Binding ErrorMessage}"
+               TextColor="Red"
+               Margin="20,0" />
 
         <!-- Rental requests list -->
-        <CollectionView ItemsSource="{Binding Rentals}">
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Rentals}">
 
             <CollectionView.EmptyView>
                 <Label Text="No rental requests yet."
                        FontSize="16"
-                       HorizontalOptions="Center" />
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
             </CollectionView.EmptyView>
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
 
                     <!-- Rental request card -->
-                    <Border Margin="0,5"
+                    <Border Margin="10,5"
                             Padding="15"
                             Stroke="LightGray"
                             StrokeThickness="1">
@@ -57,8 +63,10 @@
                             <Label Text="{Binding Status, StringFormat='Status: {0}'}"
                                    FontAttributes="Bold" />
 
-                            <!-- Action buttons -->
-                            <HorizontalStackLayout Spacing="10">
+                            <!-- Action buttons - only visible for incoming requests -->
+                            <HorizontalStackLayout Spacing="10"
+                                                   IsVisible="{Binding IsIncoming}">
+
                                 <Button Text="Accept"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AcceptRentalCommand}"
                                         CommandParameter="{Binding}" />
@@ -68,6 +76,7 @@
                                         CommandParameter="{Binding}"
                                         BackgroundColor="Red"
                                         TextColor="White" />
+
                             </HorizontalStackLayout>
 
                         </VerticalStackLayout>
@@ -78,5 +87,5 @@
 
         </CollectionView>
 
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

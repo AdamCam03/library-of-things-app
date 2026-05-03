@@ -26,6 +26,12 @@ public partial class ItemDetailViewModel : BaseViewModel
     [ObservableProperty]
     private bool canRequestRental;
 
+    [ObservableProperty]
+    private DateTime startDate = DateTime.Today.AddDays(1);
+
+    [ObservableProperty]
+    private DateTime endDate = DateTime.Today.AddDays(3);
+
     public ItemDetailViewModel(
         IItemRepository itemRepository,
         IRentalRepository rentalRepository,
@@ -83,7 +89,7 @@ public partial class ItemDetailViewModel : BaseViewModel
         }
     }
 
-    // Creates a rental request for this item
+    // Creates a rental request for this item using the selected dates
     [RelayCommand]
     private async Task RequestRentalAsync()
     {
@@ -101,6 +107,12 @@ public partial class ItemDetailViewModel : BaseViewModel
             return;
         }
 
+        if (EndDate <= StartDate)
+        {
+            ErrorMessage = "End date must be after start date";
+            return;
+        }
+
         try
         {
             var rental = new Rental
@@ -108,10 +120,10 @@ public partial class ItemDetailViewModel : BaseViewModel
                 ItemId = SelectedItem.Id,
                 RenterId = _authService.CurrentUser.Id,
                 OwnerId = SelectedItem.OwnerId,
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(3),
+                StartDate = StartDate,
+                EndDate = EndDate,
                 Message = "Rental request",
-                Status = "Pending"
+                Status = "Requested"
             };
 
             await _rentalRepository.CreateAsync(rental);

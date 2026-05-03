@@ -26,6 +26,7 @@ public partial class RentalRequestsViewModel : BaseViewModel
     }
 
     // Load all rental requests related to the user
+    // Separates incoming and outgoing rentals and marks them accordingly
     [RelayCommand]
     private async Task LoadRentalsAsync()
     {
@@ -45,12 +46,24 @@ public partial class RentalRequestsViewModel : BaseViewModel
                 return;
             }
 
-            // Get rentals where user is either owner or renter
-            var rentalList = await _rentalRepository.GetByUserIdAsync(_authService.CurrentUser.Id);
+            // Get incoming and outgoing rentals separately
+            var incoming = await _rentalRepository.GetIncomingRequestsAsync(_authService.CurrentUser.Id);
+            var outgoing = await _rentalRepository.GetOutgoingRequestsAsync(_authService.CurrentUser.Id);
+
+            // Mark incoming rentals so the UI can show Accept/Reject buttons
+            foreach (var rental in incoming)
+            {
+                rental.IsIncoming = true;
+            }
+
+            // Combine and sort by most recent first
+            var allRentals = incoming.Concat(outgoing)
+                .OrderByDescending(rental => rental.CreatedAt)
+                .ToList();
 
             Rentals.Clear();
 
-            foreach (var rental in rentalList)
+            foreach (var rental in allRentals)
             {
                 Rentals.Add(rental);
             }

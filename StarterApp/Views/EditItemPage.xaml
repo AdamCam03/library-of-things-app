@@ -16,13 +16,32 @@
                     Text="{Binding ItemDescription}"
                     HeightRequest="100" />
 
-            <!-- Category -->
-            <Entry Placeholder="Category"
-                   Text="{Binding ItemCategory}" />
+            <!-- Category picker -->
+            <Picker Title="Select Category"
+                    SelectedItem="{Binding SelectedCategory}">
+                <Picker.Items>
+                    <x:String>Tools</x:String>
+                    <x:String>Garden</x:String>
+                    <x:String>Camping</x:String>
+                    <x:String>Sports</x:String>
+                    <x:String>Electronics</x:String>
+                    <x:String>Games</x:String>
+                    <x:String>DIY</x:String>
+                    <x:String>Cycling</x:String>
+                    <x:String>Music</x:String>
+                    <x:String>Outdoors</x:String>
+                </Picker.Items>
+            </Picker>
 
-            <!-- Location -->
-            <Entry Placeholder="Location"
-                   Text="{Binding LocationName}" />
+            <!-- Location picker -->
+            <Picker Title="Select Location"
+                    SelectedItem="{Binding SelectedLocation}">
+                <Picker.Items>
+                    <x:String>Edinburgh</x:String>
+                    <x:String>Glasgow</x:String>
+                    <x:String>Paisley</x:String>
+                </Picker.Items>
+            </Picker>
 
             <!-- Daily rate -->
             <Entry Placeholder="Daily rate"
