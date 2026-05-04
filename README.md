@@ -6,24 +6,29 @@ nav_order: 5
 mermaid: true
 ---
 
-# StarterApp
+# Library of Things - Peer-to-Peer Rental Marketplace
 
-The purpose of this app is to act as a starting point for further development. It provides some
-basic features including:
+A .NET MAUI mobile application for renting everyday items within your local community, built as part of SET09102 coursework.
 
-* Database integration and migrations
-* Role-based security
-* Local authentication
-* Example navigation
+- Student Name - Adam Cameron
+- Student Number - 40537233
+- Github Link - https://github.com/AdamCam03/library-of-things-app
 
-This version of the app uses PostgreSQL for data storage and Entity Framework Core for object-relational mapping
-and migrations.
+## Overview
 
-To fully understand how it works, you should follow an appropriate set of tutorials such as 
-[this one](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/) which covers all of the main
-concepts and techniques used here. However, if you want to jump straight in and work out any problems
-as you go along, that will also work. The code uses structured comments for use with the 
-[Doxygen](https://www.doxygen.nl/) documentation generator tool. 
+Library of Things connects people who want to rent out items they own with people who need them. Users can list items, browse available items in their area, and submit and manage rental requests. The app connects to a shared REST API at https://set09102-api.b-davison.workers.dev/ and uses JWT authentication.
+
+The app provides the following features:
+
+* User authentication via shared REST API (JWT tokens)
+* Browse and search available items
+* Create, edit and manage item listings
+* Submit and manage rental requests
+* View incoming and outgoing rental requests
+
+This app is built using .NET MAUI targeting Android, with a PostgreSQL local database via Entity Framework Core. It follows the MVVM pattern using CommunityToolkit.Mvvm and implements the Repository Pattern with a generic IRepository<T> interface.
+
+To fully understand how it works, you should follow an appropriate set of tutorials such as [this one](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/) which covers all of the main concepts and techniques used here. The code uses structured comments throughout.
 
 You can use any development environment with this project including
 
@@ -31,59 +36,67 @@ You can use any development environment with this project including
 * [Visual Studio](https://visualstudio.microsoft.com/)
 * [Visual Studio Code](https://code.visualstudio.com/)
 
-The instructions assume you will be using VSCode since that is a lowest-common-denominator choice.
-
 ## Compatibility
 
-This app is built using the following tool versions.
+| Name | Version |
+|------|---------|
+| [.NET](https://dotnet.microsoft.com/en-us/) | 10.0 |
+| [PostgreSQL Docker image](https://hub.docker.com/_/postgres) | 16 |
+| Android SDK | 36 |
 
-| Name                                                                                      | Version     |
-|-------------------------------------------------------------------------------------------|-------------|
-| [.NET](https://dotnet.microsoft.com/en-us/)                                               | 8.0 / 9.0   |
-| [PostgreSQL Docker image](https://hub.docker.com/_/postgres)                              | 16          |
-
-
-## Getting started
+## Getting Started
 
 ### Prerequisites
 
 Before using this app, ensure you have:
 
-1. **.NET SDK 8.0** or later installed
+1. **.NET SDK 10.0** installed
 2. **Docker** installed and running
-3. **PostgreSQL container** running (see [dev-environment tutorial](https://edinburgh-napier.github.io/SET09102/tutorials/csharp/dev-environment/))
+3. **Android Emulator** configured
+4. **ADB** installed and accessible
+
+### Database Setup
+
+Start the PostgreSQL container:
+```bash
+docker-compose up -d db
+```
+
+Apply migrations:
+```bash
+dotnet run --project StarterApp.Migrations/StarterApp.Migrations.csproj
+```
 
 ### Configuration
 
 1. Copy `StarterApp.Database/appsettings.json.template` to `StarterApp.Database/appsettings.json`
 2. Update the connection string with your PostgreSQL credentials:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DevelopmentConnection": "Host=localhost;Username=student_user;Password=password123;Database=starterapp"
-     }
-   }
-   ```
+```json
+{
+  "ConnectionStrings": {
+    "DevelopmentConnection": "Host=localhost;Username=app_user;Password=app_password;Database=appdb"
+  }
+}
+```
 
-### Initial Setup
+### Building and Running
 
-1. Navigate to the Migrations project and create the initial migration:
-   ```bash
-   cd StarterApp.Migrations
-   dotnet ef migrations add InitialCreate
-   ```
+Build the app:
+```bash
+dotnet build -c Debug
+```
 
-2. Apply the migration to create the database:
-   ```bash
-   dotnet ef database update
-   ```
+Install to Android emulator:
+```bash
+adb install -r StarterApp/bin/Debug/net10.0-android/com.companyname.starterapp-Signed.apk
+```
 
-3. Build and run the application:
-   ```bash
-   cd ../StarterApp
-   dotnet build
-   dotnet run
-   ```
+### Running Tests
+
+```bash
+cd StarterApp.Test
+dotnet test
+```
 
 ### Tutorial
 
